@@ -520,7 +520,16 @@ const server = http.createServer((req, res) => {
                     
                     return page.goto(testURL)
                     .then(() => page.waitForFunction("window.glcheck_renderDone", {polling: RENDER_POLLING, timeout: config.renderTimeout}))
-                    .then(() => page.screenshot({ path: referencePath }))
+                    .then(() => page.evaluate(() => {
+                        // this requires that preserveDrawingBuffer be true in the webgl context
+                        const canvas = document.querySelector("canvas");
+                        return canvas.toDataURL();                       
+                    }))
+                    .then((actualData) => {
+                        const base64String = actualData.substr(actualData.indexOf(",") + 1); // get everything after the comma
+                        const imgBuffer = Buffer.from(base64String, "base64"); 
+                        fs.writeFile(referencePath, imgBuffer); 
+                    }) 
                     .catch((e) => {
                         console.log(`\n\u001b[31mError while capturing reference image: ${testPath}\u001b[0m`);
                         if (e.name === "TimeoutError") {
