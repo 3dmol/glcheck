@@ -15,7 +15,7 @@
         var canvas = document.getElementById("webgl-canvas");
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        var gl = canvas.getContext("webgl2");
+        var gl = canvas.getContext("webgl2", {preserveDrawingBuffer: true});
         if (!gl) {
             console.error("WebGL 2 not available");
             document.body.innerHTML = "This example requires WebGL 2 which is unavailable on this system."

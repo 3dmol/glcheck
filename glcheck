@@ -79,7 +79,8 @@ let config = {
     coverage: true,
     coverageFiles: [],
     headless: true,
-    only: null
+    only: null,
+    defaultViewport: { width: 800, height: 600 }
 };
 
 const argv = process.argv.slice(2);
@@ -276,7 +277,7 @@ const server = http.createServer((req, res) => {
     /////////////////////
 
 
-    const browser = await puppeteer.launch({headless: config.headless});
+    const browser = await puppeteer.launch({headless: config.headless, defaultViewport: config.defaultViewport});
     const page = await browser.newPage();
 
     /////////////////////////////////////
@@ -451,9 +452,19 @@ const server = http.createServer((req, res) => {
 
                     return page.goto(testURL)
                     .then(() => page.waitForFunction("window.glcheck_renderDone", {polling: RENDER_POLLING, timeout: config.renderTimeout}))
-                    .then(() => Promise.all([ page.screenshot(), fs.readFile(referencePath) ]))
+                    .then(() => Promise.all([ 
+                        page.evaluate(() => {
+                            /* global document */
+                            // this requires that preserveDrawingBuffer be true in the webgl context
+                            const canvas = document.querySelector("canvas");
+                            return canvas.toDataURL();
+                        }), 
+                        fs.readFile(referencePath) 
+                    ]))
                     .then(([ actualData, expectedData ]) => {
-                        const actual = PNG.sync.read(actualData);
+                        const base64String = actualData.substr(actualData.indexOf(",") + 1); // get everything after the comma
+                        const imgBuffer = Buffer.from(base64String, "base64"); // 
+                        const actual = PNG.sync.read(imgBuffer);
                         const expected = PNG.sync.read(expectedData);
                         const {width, height} = actual;
                         const numPixels = width * height;
