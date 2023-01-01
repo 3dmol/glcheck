@@ -80,6 +80,7 @@ let config = {
     coverageFiles: [],
     headless: true,
     only: null,
+    captureMissing: false, //if no reference image, generate it - dkoes
     defaultViewport: { width: 800, height: 600 }
 };
 
@@ -124,6 +125,10 @@ for (let i = 0; i < argc; ++i) {
             arg = arg || argv[++i];
             args.saveRenderFailures = arg.toLowerCase() !== "false";
             break;
+        case "--capture-missing":
+            arg = arg || argv[++i];
+            args.captureMissing = arg.toLowerCase() !== "false";
+            break;            
         case "--render-failure-dir":
             args.renderFailureDir = arg || argv[++i];
             break;
@@ -516,28 +521,35 @@ const server = http.createServer((req, res) => {
                         }
                     });
                 }).catch(() => {
-                    console.log(`\n\u001b[33mCapturing reference image: ${testPath}\u001b[0m`);
-                    
-                    return page.goto(testURL)
-                    .then(() => page.waitForFunction("window.glcheck_renderDone", {polling: RENDER_POLLING, timeout: config.renderTimeout}))
-                    .then(() => page.evaluate(() => {
-                        // this requires that preserveDrawingBuffer be true in the webgl context
-                        const canvas = document.querySelector("canvas");
-                        return canvas.toDataURL();                       
-                    }))
-                    .then((actualData) => {
-                        const base64String = actualData.substr(actualData.indexOf(",") + 1); // get everything after the comma
-                        const imgBuffer = Buffer.from(base64String, "base64"); 
-                        fs.writeFile(referencePath, imgBuffer); 
-                    }) 
-                    .catch((e) => {
-                        console.log(`\n\u001b[31mError while capturing reference image: ${testPath}\u001b[0m`);
-                        if (e.name === "TimeoutError") {
-                            console.log("\u001b[31mRender test timeout (did you forget to set 'glcheck_renderDone' in the page?)\u001b[0m\n");
-                        } else {
-                            console.log(`\u001b[31m${e.stack}\u001b[0m\n`);
-                        }
-                    });
+                    if(!config.captureMissing) {
+                      results.passed = false;
+                      results.numFailed++;                      
+                      console.log("\u001b[31mError: Missing reference image "+testPath+"\u001b[0m\n");
+
+                    } else {
+                      console.log(`\n\u001b[33mCapturing reference image: ${testPath}\u001b[0m`);
+                      
+                      return page.goto(testURL)
+                      .then(() => page.waitForFunction("window.glcheck_renderDone", {polling: RENDER_POLLING, timeout: config.renderTimeout}))
+                      .then(() => page.evaluate(() => {
+                          // this requires that preserveDrawingBuffer be true in the webgl context
+                          const canvas = document.querySelector("canvas");
+                          return canvas.toDataURL();                       
+                      }))
+                      .then((actualData) => {
+                          const base64String = actualData.substr(actualData.indexOf(",") + 1); // get everything after the comma
+                          const imgBuffer = Buffer.from(base64String, "base64"); 
+                          fs.writeFile(referencePath, imgBuffer); 
+                      }) 
+                      .catch((e) => {
+                          console.log(`\n\u001b[31mError while capturing reference image: ${testPath}\u001b[0m`);
+                          if (e.name === "TimeoutError") {
+                              console.log("\u001b[31mRender test timeout (did you forget to set 'glcheck_renderDone' in the page?)\u001b[0m\n");
+                          } else {
+                              console.log(`\u001b[31m${e.stack}\u001b[0m\n`);
+                          }
+                      });
+                  }
                 }); 
             });
         });
