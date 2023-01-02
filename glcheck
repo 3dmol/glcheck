@@ -58,6 +58,7 @@ Optional arguments:
   --render-test-threshold VAL         Match threshold between 0 and 1 for render tests [default: 0.99].
   --render-timeout TIME               Timeout for each render test in milliseconds [default: 5000].
   --save-render-failures {true/false} Save render failures and diffs [default: false].
+  --capture-missing {true/false}      Generate images if they are missing.
   --render-failure-dir PATH           Path to save render failures and diffs to [default: glcheck-tests/render-failures/].
   --server-port PORT                  Port to run testing server on [default: 7171].
   --headless {true/false}             Run headless [default: true].
