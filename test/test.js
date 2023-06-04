@@ -1,3 +1,5 @@
+/* eslint-disable strict */
+/* eslint-disable no-undef */
 ///////////////////////////////////////////////////////////////////////////////////
 // The MIT License (MIT)
 //
@@ -21,6 +23,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ///////////////////////////////////////////////////////////////////////////////////
 
+// eslint-disable-next-line no-unused-vars
 glcheck("Basic assertions", (t, canvas) => {
     t.ok(true, "ok");
     t.notOk(false, "notOk");
@@ -31,19 +34,21 @@ glcheck("Basic assertions", (t, canvas) => {
     t.deepEqual({a: 1, b: 2}, {a: 1, b: 2}, "deepEqual");
     t.notDeepEqual({a: 1, b: 2}, {a: 1, b: 3}, "notDeepEqual");
 
-    t.deepEqual([1, 2, 3, 4], new Float32Array([1, 2, 3, 4]), "deepEqual");
-    t.deepEqual(new Float32Array([1, 2, 3, 4]), [1, 2, 3, 4], "deepEqual");
-    t.deepEqual(new Float32Array([1, 2, 3, 4]), new Float32Array([1, 2, 3, 4]), "deepEqual");
-    t.deepEqual(new Float32Array([1, 2, 3, 4]), new Uint8Array([1, 2, 3, 4]), "deepEqual");
-    t.deepEqual(new Uint8Array([1, 2, 3, 4]), new Float32Array([1, 2, 3, 4]), "deepEqual");
+    t.deepEqual([ 1, 2, 3, 4 ], new Float32Array([ 1, 2, 3, 4 ]), "deepEqual");
+    t.deepEqual(new Float32Array([ 1, 2, 3, 4 ]), [ 1, 2, 3, 4 ], "deepEqual");
+    t.deepEqual(new Float32Array([ 1, 2, 3, 4 ]), new Float32Array([ 1, 2, 3, 4 ]), "deepEqual");
+    t.deepEqual(new Float32Array([ 1, 2, 3, 4 ]), new Uint8Array([ 1, 2, 3, 4 ]), "deepEqual");
+    t.deepEqual(new Uint8Array([ 1, 2, 3, 4 ]), new Float32Array([ 1, 2, 3, 4 ]), "deepEqual");
 
-    t.notDeepEqual([1, 2, 3, 4], new Float32Array([1, 2, 3, 5]), "notDeepEqual");
-    t.notDeepEqual(new Float32Array([1, 2, 3, 4]), [1, 2, 3, 5], "notDeepEqual");
-    t.notDeepEqual(new Float32Array([1, 2, 3, 4]), new Float32Array([1, 2, 3, 5]), "notDeepEqual");
-    t.notDeepEqual(new Float32Array([1, 2, 3, 4]), new Uint8Array([1, 2, 3, 5]), "notDeepEqual");
-    t.notDeepEqual(new Uint8Array([1, 2, 3, 4]), new Float32Array([1, 2, 3, 5]), "notDeepEqual");
+    t.notDeepEqual([ 1, 2, 3, 4 ], new Float32Array([ 1, 2, 3, 5 ]), "notDeepEqual");
+    t.notDeepEqual(new Float32Array([ 1, 2, 3, 4 ]), [ 1, 2, 3, 5 ], "notDeepEqual");
+    t.notDeepEqual(new Float32Array([ 1, 2, 3, 4 ]), new Float32Array([ 1, 2, 3, 5 ]), "notDeepEqual");
+    t.notDeepEqual(new Float32Array([ 1, 2, 3, 4 ]), new Uint8Array([ 1, 2, 3, 5 ]), "notDeepEqual");
+    t.notDeepEqual(new Uint8Array([ 1, 2, 3, 4 ]), new Float32Array([ 1, 2, 3, 5 ]), "notDeepEqual");
 
-    t.throws(() => {throw "Throw";}, "throws");
+    t.throws(() => {
+        throw "Throw";
+    }, "throws");
     t.doesNotThrow(() => "No throw", "doesNotThrow");
 
     t.done();
@@ -57,8 +62,8 @@ glcheck("GL parameters", (t, canvas) => {
     t.parameterNotEqual(gl, gl.DEPTH_TEST, false, "parameterNotEqual primitive");
 
     gl.viewport(10, 20, 30, 40);
-    t.parameterEqual(gl, gl.VIEWPORT, [10, 20, 30, 40], "parameterEqual array");
-    t.parameterNotEqual(gl, gl.VIEWPORT, [11, 20, 30, 40], "parameterNotEqual array");
+    t.parameterEqual(gl, gl.VIEWPORT, [ 10, 20, 30, 40 ], "parameterEqual array");
+    t.parameterNotEqual(gl, gl.VIEWPORT, [ 11, 20, 30, 40 ], "parameterNotEqual array");
     
     t.done();
 });
@@ -68,17 +73,17 @@ glcheck("GL buffers", (t, canvas) => {
 
     let buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([1, 2, 3, 4]), gl.STATIC_READ);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 1, 2, 3, 4 ]), gl.STATIC_READ);
 
-    t.bufferEqual(gl, gl.ARRAY_BUFFER, [1, 2, 3, 4], "bufferEqual");
-    t.bufferNotEqual(gl, gl.ARRAY_BUFFER, [1, 2, 2, 4], "bufferNotEqual");
+    t.bufferEqual(gl, gl.ARRAY_BUFFER, [ 1, 2, 3, 4 ], "bufferEqual");
+    t.bufferNotEqual(gl, gl.ARRAY_BUFFER, [ 1, 2, 2, 4 ], "bufferNotEqual");
 
     buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array([5, 6, 7, 8]), gl.STATIC_READ);
+    gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array([ 5, 6, 7, 8 ]), gl.STATIC_READ);
 
-    t.bufferEqual(gl, gl.ARRAY_BUFFER, new Uint8Array([5, 6, 7, 8]), "bufferEqual Uint8Array");
-    t.bufferNotEqual(gl, gl.ARRAY_BUFFER, new Uint8Array([5, 6, 8, 8]), "bufferNotEqual Uint8Array");
+    t.bufferEqual(gl, gl.ARRAY_BUFFER, new Uint8Array([ 5, 6, 7, 8 ]), "bufferEqual Uint8Array");
+    t.bufferNotEqual(gl, gl.ARRAY_BUFFER, new Uint8Array([ 5, 6, 8, 8 ]), "bufferNotEqual Uint8Array");
 
     t.done();
 });
@@ -88,8 +93,8 @@ glcheck("GL draw", (t, canvas) => {
 
     gl.clearColor(1, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    t.pixelEqual(gl, [255, 0, 0, 255], "pixelEqual");
-    t.pixelNotEqual(gl, [255, 255, 0, 255], "pixelNotEqual");
+    t.pixelEqual(gl, [ 255, 0, 0, 255 ], "pixelEqual");
+    t.pixelNotEqual(gl, [ 255, 255, 0, 255 ], "pixelNotEqual");
 
     let halfWidth = gl.drawingBufferWidth / 2;
     let halfHeight = gl.drawingBufferHeight / 2;
@@ -116,21 +121,22 @@ glcheck("GL draw", (t, canvas) => {
     gl.clearColor(1, 1, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    t.pixelEqual(gl, [0.25, 0.25], [255, 0, 0, 255], "pixelEqual uv");
-    t.pixelNotEqual(gl, [0.25, 0.25], [255, 0, 0, 128], "pixelNotEqual uv");
+    t.pixelEqual(gl, [ 0.25, 0.25 ], [ 255, 0, 0, 255 ], "pixelEqual uv");
+    t.pixelNotEqual(gl, [ 0.25, 0.25 ], [ 255, 0, 0, 128 ], "pixelNotEqual uv");
     
-    t.pixelEqual(gl, [0.75, 0.25], [0, 255, 0, 255], "pixelEqual uv");
-    t.pixelNotEqual(gl, [0.75, 0.25], [0, 255, 0, 128], "pixelNotEqual uv");
+    t.pixelEqual(gl, [ 0.75, 0.25 ], [ 0, 255, 0, 255 ], "pixelEqual uv");
+    t.pixelNotEqual(gl, [ 0.75, 0.25 ], [ 0, 255, 0, 128 ], "pixelNotEqual uv");
     
-    t.pixelEqual(gl, [0.25, 0.75], [0, 0, 255, 255], "pixelEqual uv");
-    t.pixelNotEqual(gl, [0.25, 0.75], [0, 0, 255, 128], "pixelNotEqual uv");
+    t.pixelEqual(gl, [ 0.25, 0.75 ], [ 0, 0, 255, 255 ], "pixelEqual uv");
+    t.pixelNotEqual(gl, [ 0.25, 0.75 ], [ 0, 0, 255, 128 ], "pixelNotEqual uv");
     
-    t.pixelEqual(gl, [0.75, 0.75], [255, 255, 0, 255], "pixelEqual uv");
-    t.pixelNotEqual(gl, [0.75, 0.75], [255, 255, 0, 128], "pixelNotEqual uv");
+    t.pixelEqual(gl, [ 0.75, 0.75 ], [ 255, 255, 0, 255 ], "pixelEqual uv");
+    t.pixelNotEqual(gl, [ 0.75, 0.75 ], [ 255, 255, 0, 128 ], "pixelNotEqual uv");
 
     t.done();
 });
 
+// eslint-disable-next-line no-unused-vars
 glcheck("Async", async (t, canvas) => {
     let done = false;
     setTimeout(() => {
@@ -143,15 +149,17 @@ glcheck("Async", async (t, canvas) => {
     t.done();
 });
 
+// eslint-disable-next-line no-unused-vars
 glcheck("Assets", async (t, canvas) => {
     let response = await fetch("assets/asset.json");
     let json = await response.json();
 
-    t.equal(json.result, "PASSED", "Fetched an asset.")
+    t.equal(json.result, "PASSED", "Fetched an asset.");
 
     t.done();
 });
 
+// eslint-disable-next-line no-unused-vars
 glcheck("Bad json", async (t, canvas) => {
     const circular1 = {a: 1};
     circular1.circular = circular1;
