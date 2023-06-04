@@ -31,7 +31,7 @@ By default, `glcheck` will read configuration from `glcheck.config.json` in the 
 - **saveRenderFailures** (default: `false`): Whether to save render failure and diff images for render tests.
 - **renderFailureDir** (default: `"glcheck-tests/render-failures/"`): Where to save render failure and diff images for render tests.
 - **serverPort** (default: `7171`): Port to run the local server on for puppeteer.
-- **headless** (default: `true`): Whether to run headless.
+- **headless** (default: `old`): Whether to use old or new headless or completely disabled it using false.
 - **coverage** (default: `true`): Whether to generate coverage results that are consumable by [Istanbul](https://istanbul.js.org/).
 - **coverageFiles** (default: `[]`): Files to include in coverage results.
 - **only** (default: `null`): Only run the provided test file (can be a glob pattern to run multiple files).
