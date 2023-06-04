@@ -39,7 +39,7 @@ By default, `glcheck` will read configuration from `glcheck.config.json` in the 
 Full `glcheck` command line usage is as follows:
 
 ```bash
-glcheck [--help] [--version] [--config PATH] [--unit-test-dir PATH] [--asset-dir PATH] [--reference-image-dir PATH] [--render-test-threshold VAL] [--render-timeout TIME] [--save-render-failures {true/false}] [--render-failure-dir PATH] [--server-port PORT] [--coverage {true/false}] [--headless {true/false}] [--only PATH]
+glcheck [--help] [--version] [--config PATH] [--unit-test-dir PATH] [--asset-dir PATH] [--reference-image-dir PATH] [--render-test-threshold VAL] [--render-timeout TIME] [--save-render-failures {true/false}] [--render-failure-dir PATH] [--server-port PORT] [--coverage {true/false}] [--headless {old/new/false}] [--only PATH]
 ```
 
 Command line arguments will always override options from the config file:
@@ -54,7 +54,7 @@ Command line arguments will always override options from the config file:
 - **--save-render-failures** (default: `false`): Whether to save render failure and diff images for render tests.
 - **--render-failure-dir** (default: `"glcheck-tests/render-failures/"`): Where to save render failure and diff images for render tests.
 - **--server-port** (default: `7171`): Port to run the local server on for puppeteer.
-- **--headless** (default: `true`): Whether to run headless.
+- **--headless** (default: `old`): Whether to use old or new headless or completely disabled it using false.
 - **--coverage** (default: `true`): Whether to generate coverage results that are consumable by [Istanbul](https://istanbul.js.org/).
 - **--only** (default: `null`): Only run the provided test file (can be a glob pattern to run multiple files).
 
