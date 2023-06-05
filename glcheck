@@ -44,7 +44,7 @@ const HELP_MESSAGE = `usage: glcheck [--help] [--version] [--config PATH] [--uni
                         [--asset-dir PATH] [--reference-image-dir PATH] [--render-test-threshold VAL]
                         [--render-timeout TIME] [--save-render-failures {true/false}]
                         [--render-failure-dir PATH] [--server-port PORT] [--coverage {true/false}] 
-                        [--headless {true/false}] [--only PATH]
+                        [--headless {old/new/false}] [--only PATH]
 
 Test WebGL 1 and 2 applications.
 
@@ -61,7 +61,7 @@ Optional arguments:
   --capture-missing {true/false}      Generate images if they are missing.
   --render-failure-dir PATH           Path to save render failures and diffs to [default: glcheck-tests/render-failures/].
   --server-port PORT                  Port to run testing server on [default: 7171].
-  --headless {true/false}             Run headless [default: true].
+  --headless {old/new/false}              Run headless [default: old] - To use new headless mode, use [headless: new]
   --coverage {true/false}             Generate coverage results that can be consumed by Istanbul [default: true].
   --only PATH                         Only run test file PATH (can be a glob pattern to run multiple files).
 `;
@@ -79,9 +79,9 @@ let config = {
     assetDir: null,
     coverage: true,
     coverageFiles: [],
-    headless: true,
+    headless: "old", // More info, https://developer.chrome.com/articles/new-headless/#try-out-the-new-headless
     only: null,
-    captureMissing: false, //if no reference image, generate it - dkoes
+    captureMissing: false, // if no reference image, generate it - dkoes
     defaultViewport: { width: 800, height: 600 }
 };
 
@@ -98,7 +98,7 @@ for (let i = 0; i < argc; ++i) {
             break;
         case "--headless":
             arg = arg || argv[++i];
-            args.headless = arg.toLowerCase() !== "false";
+            args.headless = arg.toLowerCase() !== "old";
             break;
         case "--coverage":
             arg = arg || argv[++i];
@@ -521,36 +521,37 @@ const server = http.createServer((req, res) => {
                             console.log(`\u001b[31m${e.stack}\u001b[0m\n`);
                         }
                     });
+                // eslint-disable-next-line consistent-return
                 }).catch(() => {
                     if(!config.captureMissing) {
-                      results.passed = false;
-                      results.numFailed++;                      
-                      console.log("\u001b[31mError: Missing reference image "+testPath+"\u001b[0m\n");
+                        results.passed = false;
+                        results.numFailed++;                      
+                        console.log("\u001b[31mError: Missing reference image "+testPath+"\u001b[0m\n");
 
                     } else {
-                      console.log(`\n\u001b[33mCapturing reference image: ${testPath}\u001b[0m`);
+                        console.log(`\n\u001b[33mCapturing reference image: ${testPath}\u001b[0m`);
                       
-                      return page.goto(testURL)
-                      .then(() => page.waitForFunction("window.glcheck_renderDone", {polling: RENDER_POLLING, timeout: config.renderTimeout}))
-                      .then(() => page.evaluate(() => {
-                          // this requires that preserveDrawingBuffer be true in the webgl context
-                          const canvas = document.querySelector("canvas");
-                          return canvas.toDataURL();                       
-                      }))
-                      .then((actualData) => {
-                          const base64String = actualData.substr(actualData.indexOf(",") + 1); // get everything after the comma
-                          const imgBuffer = Buffer.from(base64String, "base64"); 
-                          fs.writeFile(referencePath, imgBuffer); 
-                      }) 
-                      .catch((e) => {
-                          console.log(`\n\u001b[31mError while capturing reference image: ${testPath}\u001b[0m`);
-                          if (e.name === "TimeoutError") {
-                              console.log("\u001b[31mRender test timeout (did you forget to set 'glcheck_renderDone' in the page?)\u001b[0m\n");
-                          } else {
-                              console.log(`\u001b[31m${e.stack}\u001b[0m\n`);
-                          }
-                      });
-                  }
+                        return page.goto(testURL)
+                        .then(() => page.waitForFunction("window.glcheck_renderDone", {polling: RENDER_POLLING, timeout: config.renderTimeout}))
+                        .then(() => page.evaluate(() => {
+                            // this requires that preserveDrawingBuffer be true in the webgl context
+                            const canvas = document.querySelector("canvas");
+                            return canvas.toDataURL();                       
+                        }))
+                        .then((actualData) => {
+                            const base64String = actualData.substr(actualData.indexOf(",") + 1); // get everything after the comma
+                            const imgBuffer = Buffer.from(base64String, "base64"); 
+                            fs.writeFile(referencePath, imgBuffer); 
+                        }) 
+                        .catch((e) => {
+                            console.log(`\n\u001b[31mError while capturing reference image: ${testPath}\u001b[0m`);
+                            if (e.name === "TimeoutError") {
+                                console.log("\u001b[31mRender test timeout (did you forget to set 'glcheck_renderDone' in the page?)\u001b[0m\n");
+                            } else {
+                                console.log(`\u001b[31m${e.stack}\u001b[0m\n`);
+                            }
+                        });
+                    }
                 }); 
             });
         });
