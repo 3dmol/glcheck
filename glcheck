@@ -64,6 +64,7 @@ Optional arguments:
   --headless {old/new/false}              Run headless [default: old] - To use new headless mode, use [headless: new]
   --coverage {true/false}             Generate coverage results that can be consumed by Istanbul [default: true].
   --only PATH                         Only run test file PATH (can be a glob pattern to run multiple files).
+  --no-cors                           Run in disabled security mode to avoid CORS issues
 `;
 
 let config = {
@@ -81,6 +82,7 @@ let config = {
     coverageFiles: [],
     headless: "old", // More info, https://developer.chrome.com/articles/new-headless/#try-out-the-new-headless
     only: null,
+    nocors: false,
     captureMissing: false, // if no reference image, generate it - dkoes
     defaultViewport: { width: 800, height: 600 }
 };
@@ -136,6 +138,9 @@ for (let i = 0; i < argc; ++i) {
         case "--only":
             args.only = arg || argv[++i];
             break;
+        case "--no-cors":
+            arg = arg || argv[++i];
+            args.nocors = arg.toLowerCase() !== "false";
         case "--self-test":
             args.selfTest = true;
             break;
@@ -283,7 +288,9 @@ const server = http.createServer((req, res) => {
     /////////////////////
 
 
-    const browser = await puppeteer.launch({headless: config.headless, defaultViewport: config.defaultViewport});
+    const browser = await puppeteer.launch({headless: config.headless, 
+                                        defaultViewport: config.defaultViewport,
+                                        args: args.nocors ? ['--disable-web-security', '--allow-file-access-from-files'] : []});
     const page = await browser.newPage();
 
     /////////////////////////////////////

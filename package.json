@@ -35,8 +35,8 @@
     "node-glob": "^1.2.0",
     "pixelmatch": "^5.3.0",
     "pngjs": "^7.0.0",
-    "puppeteer": "^19.11.1",
-    "puppeteer-to-istanbul": "^1.4.0",
+    "puppeteer": "^24.5.0",
+    "puppeteer-to-istanbul": ">=1.4.0",
     "rimraf": "^5.0.1"
   },
   "devDependencies": {
