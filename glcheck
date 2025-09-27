@@ -290,7 +290,7 @@ const server = http.createServer((req, res) => {
 
 
     const browser = await puppeteer.launch({headless: config.headless, defaultViewport: config.defaultViewport, 
-        args: args.nocors ? [ "--disable-web-security", "--allow-file-access-from-files" ] : []});
+        args: config.nocors ? [ "--disable-web-security", "--allow-file-access-from-files" ] : []});
     const page = await browser.newPage();
 
     /////////////////////////////////////
