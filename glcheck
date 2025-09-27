@@ -141,6 +141,7 @@ for (let i = 0; i < argc; ++i) {
         case "--no-cors":
             arg = arg || argv[++i];
             args.nocors = arg.toLowerCase() !== "false";
+            break;
         case "--self-test":
             args.selfTest = true;
             break;
